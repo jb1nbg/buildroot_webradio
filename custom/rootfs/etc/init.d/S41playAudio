@@ -1,0 +1,13 @@
+#!/bin/sh
+
+CONFIGFILE=/root/.config/qtwebradio/WebRadio.conf
+if [ -e ${CONFIGFILE} ]; then
+    URL=`cat ${CONFIGFILE} | grep "lastStreamUrl="`
+    if [ $URL != "" ]; then
+        STREAM=`echo ${URL} | cut -d"=" -f2 | sed "s/\"//g"`
+        echo ${STREAM}
+        mpg123 -o alsa -d equal ${STREAM} &
+    fi
+else
+    echo "File \"${CONFIGFILE}\" not found"
+fi

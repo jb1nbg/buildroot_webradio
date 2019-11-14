@@ -1,0 +1,6 @@
+#!/bin/sh
+
+su - root -c "/root/startWebradio.sh &"
+
+/usr/sbin/fbcp &
+

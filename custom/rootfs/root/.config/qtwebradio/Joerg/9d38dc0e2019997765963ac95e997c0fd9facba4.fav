@@ -1,0 +1,8 @@
+{
+    "id": 2451,
+    "name": "STAR FM Nürnberg",
+    "picture1TransName": "t100.png",
+    "pictureBaseURL": "http://static.radio.de/images/broadcasts/2d/bf/2451/2/",
+    "streamURL": "http://nbg.starfm.de/player/pls/nbg_pls_mp3.php.pls",
+    "type": 2
+}

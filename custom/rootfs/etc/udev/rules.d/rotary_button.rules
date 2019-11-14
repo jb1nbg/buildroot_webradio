@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="button@1b", SYMLINK+="input/mute"
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="button@16", SYMLINK+="input/return"

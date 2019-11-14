@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# psplash auch auf dem HDMI starten, da hier die WebRadio App per Eglfs hinzeichnet und wir später von fb1 auf fb0 umschalten (fbcp)
+/usr/bin/psplash --fbdev 0 &
+/usr/bin/psplash --fbdev 1 &

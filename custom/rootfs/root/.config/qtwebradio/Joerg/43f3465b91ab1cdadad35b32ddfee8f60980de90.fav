@@ -1,0 +1,8 @@
+{
+    "id": 6875,
+    "name": "ENERGY Nürnberg",
+    "picture1TransName": "t100.png",
+    "pictureBaseURL": "http://static.radio.de/images/broadcasts/15/f9/6875/1/",
+    "streamURL": "http://cdn.nrjaudio.fm/adwz1/de/33011/mp3_128.mp3?origine=radio.net",
+    "type": 1
+}

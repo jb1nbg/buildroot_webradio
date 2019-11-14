@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="rotary@c", SYMLINK+="input/volume"
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="rotary@4", SYMLINK+="input/select"
