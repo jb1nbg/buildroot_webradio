@@ -1,0 +1,62 @@
+diff -ruN patch_original/Makefile patch_modified/Makefile
+--- patch_original/Makefile	2019-10-07 16:09:06.816115020 +0200
++++ patch_modified/Makefile	2019-10-07 16:09:46.180469078 +0200
+@@ -3,18 +3,18 @@
+ PREFIX = /usr
+ DESTDIR = 
+ 
+-CC = g++
++CXX ?= g++
+ 
+-OPTS = -O3 -ffast-math -funroll-loops -Wall -fPIC -DPIC 
++OPTS = -O3 -ffast-math -funroll-loops -Wall -fPIC -DPIC
+ #OPTS = -fPIC -DPIC -g -DDEBUG 
+ 
+ _LDFLAGS = -shared 
+-STRIP = strip
++STRIP ?= strip
+ 
+ -include defines.make
+ 
+-CFLAGS += $(OPTS) $(_CFLAGS)
+-LDFLAGS += $(_LDFLAGS) $(CFLAGS)
++override CXXFLAGS += $(OPTS) $(_CXXFLAGS)
++override LDFLAGS += $(_LDFLAGS) $(CXXFLAGS)
+ 
+ PLUG = caps
+ 
+@@ -53,19 +53,18 @@
+ 	python tools/make-rdf.py > $(PLUG).rdf
+ 
+ $(PLUG).so: $(OBJECTS)
+-	$(CC) $(ARCH) $(LDFLAGS) -o $@ $(OBJECTS)
++	$(CXX) $(ARCH) $(LDFLAGS) -o $@ $(OBJECTS)
+ 
+ .cc.s: 
+-	$(CC) $(ARCH) $(CFLAGS) -S $<
++	$(CXX) $(ARCH) $(CXXFLAGS) -S $<
+ 
+ .cc.o: depend 
+-	$(CC) $(ARCH) $(CFLAGS) -o $@ -c $<
++	$(CXX) $(ARCH) $(CXXFLAGS) -o $@ -c $<
+ 
+ tags: $(SOURCES) $(HEADERS)
+ 	@-if [ -x /usr/bin/ctags ]; then ctags $(SOURCES) $(HEADERS) >/dev/null 2>&1 ; fi
+ 
+ install: all
+-	@$(STRIP) $(PLUG).so > /dev/null
+ 	install -d $(DESTDIR)$(DEST)
+ 	install -m 644 $(PLUG).so $(DESTDIR)$(DEST)
+ 	install -d $(DESTDIR)$(RDFDEST)
+@@ -92,9 +91,9 @@
+ 	@VERSION=$(VERSION) python tools/make-version.h.py
+ 
+ dist: all $(PLUG).rdf version.h
+-	tools/make-dist.py caps $(VERSION) $(CFLAGS)
++	tools/make-dist.py caps $(VERSION) $(CXXFLAGS)
+ 
+ depend: $(SOURCES) $(HEADERS)
+-	$(CC) -MM $(CFLAGS) $(DEFINES) $(SOURCES) > depend
++	$(CXX) -MM $(CXXFLAGS) $(DEFINES) $(SOURCES) > depend
+ 
+ -include depend

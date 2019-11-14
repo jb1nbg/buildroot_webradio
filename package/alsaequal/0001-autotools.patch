@@ -1,0 +1,312 @@
+diff -ruN patch_original/AUTHORS patch_modified/AUTHORS
+--- patch_original/AUTHORS	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/AUTHORS	2019-10-07 13:26:37.000000000 +0200
+@@ -0,0 +1 @@
++AUTHORS
+diff -ruN patch_original/ChangeLog patch_modified/ChangeLog
+--- patch_original/ChangeLog	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/ChangeLog	2019-10-07 13:26:41.000000000 +0200
+@@ -0,0 +1 @@
++ChangeLog
+diff -ruN patch_original/configure.ac patch_modified/configure.ac
+--- patch_original/configure.ac	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/configure.ac	2019-10-07 14:17:13.000000000 +0200
+@@ -0,0 +1,22 @@
++AC_PREREQ(2.69)
++AC_INIT(libasound2-plugin-equal, 0.6, joerg.bressler@e-t-a.de)
++AM_INIT_AUTOMAKE()
++
++AC_CONFIG_SRCDIR([Makefile.am])
++AC_CONFIG_SRCDIR([ctl/Makefile.am])
++AC_CONFIG_SRCDIR([pcm/Makefile.am])
++AC_CONFIG_SRCDIR([ladspa.h])
++
++AC_CONFIG_FILES([Makefile ctl/Makefile pcm/Makefile])
++
++AC_PROG_CC
++LT_INIT
++
++AC_CHECK_HEADERS([stdio.h unistd.h stdlib.h fcntl.h dlfcn.h errno.h sys/mman.h string.h math.h alsa/asoundlib.h alsa/pcm.h alsa/pcm_external.h alsa/control.h linux/soundcard.h alsa/control_external.h])
++AC_CHECK_LIB([asound] , [snd_dlopen])
++
++AC_C_BIGENDIAN
++
++AC_TYPE_UINT32_T
++
++AC_OUTPUT
+diff -ruN patch_original/ctl/Makefile.am patch_modified/ctl/Makefile.am
+--- patch_original/ctl/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/ctl/Makefile.am	2019-10-07 14:21:20.000000000 +0200
+@@ -0,0 +1,5 @@
++AUTOMAKE_OPTIONS = subdir-objects
++AM_CFLAGS = -funroll-loops -ffast-math
++AM_CPPFLAGS = -I$(top_srcdir)/
++lib_LTLIBRARIES = libasound_module_ctl_equal.la
++libasound_module_ctl_equal_la_SOURCES = ../ctl_equal.c ../ladspa_utils.c
+diff -ruN patch_original/ctl_equal.c patch_modified/ctl_equal.c
+--- patch_original/ctl_equal.c	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/ctl_equal.c	2019-10-08 08:30:02.529151109 +0200
+@@ -21,8 +21,8 @@
+ #include <alsa/asoundlib.h>
+ #include <alsa/control_external.h>
+ 
+-#include "ladspa.h"
+-#include "ladspa_utils.h"
++#include <ladspa.h>
++#include <ladspa_utils.h>
+ 
+ typedef struct snd_ctl_equal_control {
+ 	long min;
+@@ -167,7 +167,7 @@
+ 	snd_ctl_equal_t *equal;
+ 	const char *controls = ".alsaequal.bin";
+ 	const char *library = "/usr/lib/ladspa/caps.so";
+-	const char *module = "Eq";
++	const char *module = "Eq10";
+ 	long channels = 2;
+ 	const char *sufix = " Playback Volume";
+ 	int err, i, index;
+@@ -263,8 +263,8 @@
+ 	for(i = 0; i < equal->num_input_controls; i++) {
+ 		if(equal->control_data->control[i].type == LADSPA_CNTRL_INPUT) {
+ 			index = equal->control_data->control[i].index;
+-			if(equal->klass->PortDescriptors[index] !=
+-					(LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL)) {
++			if((equal->klass->PortDescriptors[index] &
++					(LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL)) == 0) {
+ 				SNDERR("Problem with control file %s, %d.", controls, index);
+ 				return -1;
+ 			}
+diff -ruN patch_original/INSTALL patch_modified/INSTALL
+--- patch_original/INSTALL	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/INSTALL	2019-10-07 13:26:44.000000000 +0200
+@@ -0,0 +1 @@
++INSTALL
+diff -ruN patch_original/ladspa_utils.c patch_modified/ladspa_utils.c
+--- patch_original/ladspa_utils.c	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/ladspa_utils.c	2019-10-07 13:31:37.000000000 +0200
+@@ -13,8 +13,8 @@
+ #include <string.h>
+ #include <math.h>
+ 
+-#include "ladspa.h"
+-#include "ladspa_utils.h"
++#include <ladspa.h>
++#include <ladspa_utils.h>
+ 
+ /* ------------------------------------------------------------------ */
+ 
+diff -ruN patch_original/ladspa_utils.h patch_modified/ladspa_utils.h
+--- patch_original/ladspa_utils.h	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/ladspa_utils.h	2019-10-07 13:31:46.000000000 +0200
+@@ -6,7 +6,7 @@
+ #ifndef LADSPA_SDK_LOAD_PLUGIN_LIB
+ #define LADSPA_SDK_LOAD_PLUGIN_LIB
+ 
+-#include "ladspa.h"
++#include <ladspa.h>
+ 
+ /* This function call takes a plugin library filename, searches for
+    the library along the LADSPA_PATH, loads it with dlopen() and
+diff -ruN patch_original/Makefile patch_modified/Makefile
+--- patch_original/Makefile	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/Makefile	1970-01-01 01:00:00.000000000 +0100
+@@ -1,55 +0,0 @@
+-
+-# Quiet (set to @ for a quite compile)
+-Q	?= @
+-#Q	?=
+-
+-# Build Tools
+-CC 	:= gcc
+-CFLAGS := -I. -O2 -Wall -funroll-loops -ffast-math -fPIC -DPIC
+-LD := gcc
+-LDFLAGS := -O2 -Wall -shared -lasound
+-
+-SND_PCM_OBJECTS = pcm_equal.o ladspa_utils.o
+-SND_PCM_LIBS =
+-SND_PCM_BIN = libasound_module_pcm_equal.so
+-
+-SND_CTL_OBJECTS = ctl_equal.o ladspa_utils.o
+-SND_CTL_LIBS =
+-SND_CTL_BIN = libasound_module_ctl_equal.so
+-
+-.PHONY: all clean dep load_default
+-
+-all: Makefile $(SND_PCM_BIN) $(SND_CTL_BIN)
+-
+-dep:
+-	@echo DEP $@
+-	$(Q)for i in *.c; do $(CC) -MM $(CFLAGS) "$${i}" ; done > makefile.dep
+-
+--include makefile.dep
+-
+-$(SND_PCM_BIN): $(SND_PCM_OBJECTS)
+-	@echo LD $@
+-	$(Q)$(LD) $(LDFLAGS) $(SND_PCM_LIBS) $(SND_PCM_OBJECTS) -o $(SND_PCM_BIN)
+-
+-$(SND_CTL_BIN): $(SND_CTL_OBJECTS)
+-	@echo LD $@
+-	$(Q)$(LD) $(LDFLAGS) $(SND_CTL_LIBS) $(SND_CTL_OBJECTS) -o $(SND_CTL_BIN)
+-
+-%.o: %.c
+-	@echo GCC $<
+-	$(Q)$(CC) -c $(CFLAGS) $<
+-
+-clean:
+-	@echo Cleaning...
+-	$(Q)rm -vf *.o *.so
+-
+-install: all
+-	@echo Installing...
+-	$(Q)install -m 644 $(SND_PCM_BIN) ${DESTDIR}/usr/lib/alsa-lib/
+-	$(Q)install -m 644 $(SND_CTL_BIN) ${DESTDIR}/usr/lib/alsa-lib/
+-
+-uninstall:
+-	@echo Un-installing...
+-	$(Q)rm ${DESTDIR}/usr/lib/alsa-lib/$(SND_PCM_BIN)
+-	$(Q)rm ${DESTDIR}/usr/lib/alsa-lib/$(SND_CTL_BIN)
+-	
+diff -ruN patch_original/Makefile~ patch_modified/Makefile~
+--- patch_original/Makefile~	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/Makefile~	1970-01-01 01:00:00.000000000 +0100
+@@ -1,55 +0,0 @@
+-
+-# Quiet (set to @ for a quite compile)
+-Q	?= @
+-#Q	?=
+-
+-# Build Tools
+-CC 	:= gcc
+-CFLAGS := -I. -O2 -Wall -funroll-loops -ffast-math -fPIC -DPIC
+-LD := gcc
+-LDFLAGS := -O2 -Wall -shared
+-
+-SND_PCM_OBJECTS = pcm_equal.o ladspa_utils.o
+-SND_PCM_LIBS =
+-SND_PCM_BIN = libasound_module_pcm_equal.so
+-
+-SND_CTL_OBJECTS = ctl_equal.o ladspa_utils.o
+-SND_CTL_LIBS =
+-SND_CTL_BIN = libasound_module_ctl_equal.so
+-
+-.PHONY: all clean dep load_default
+-
+-all: Makefile $(SND_PCM_BIN) $(SND_CTL_BIN)
+-
+-dep:
+-	@echo DEP $@
+-	$(Q)for i in *.c; do $(CC) -MM $(CFLAGS) "$${i}" ; done > makefile.dep
+-
+--include makefile.dep
+-
+-$(SND_PCM_BIN): $(SND_PCM_OBJECTS)
+-	@echo LD $@
+-	$(Q)$(LD) $(LDFLAGS) $(SND_PCM_LIBS) $(SND_PCM_OBJECTS) -o $(SND_PCM_BIN)
+-
+-$(SND_CTL_BIN): $(SND_CTL_OBJECTS)
+-	@echo LD $@
+-	$(Q)$(LD) $(LDFLAGS) $(SND_CTL_LIBS) $(SND_CTL_OBJECTS) -o $(SND_CTL_BIN)
+-
+-%.o: %.c
+-	@echo GCC $<
+-	$(Q)$(CC) -c $(CFLAGS) $<
+-
+-clean:
+-	@echo Cleaning...
+-	$(Q)rm -vf *.o *.so
+-
+-install: all
+-	@echo Installing...
+-	$(Q)install -m 644 $(SND_PCM_BIN) ${DESTDIR}/usr/lib/alsa-lib/
+-	$(Q)install -m 644 $(SND_CTL_BIN) ${DESTDIR}/usr/lib/alsa-lib/
+-
+-uninstall:
+-	@echo Un-installing...
+-	$(Q)rm ${DESTDIR}/usr/lib/alsa-lib/$(SND_PCM_BIN)
+-	$(Q)rm ${DESTDIR}/usr/lib/alsa-lib/$(SND_CTL_BIN)
+-	
+diff -ruN patch_original/Makefile.am patch_modified/Makefile.am
+--- patch_original/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/Makefile.am	2019-10-07 13:18:13.000000000 +0200
+@@ -0,0 +1 @@
++SUBDIRS = ctl pcm
+diff -ruN patch_original/makefile.dep patch_modified/makefile.dep
+--- patch_original/makefile.dep	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/makefile.dep	1970-01-01 01:00:00.000000000 +0100
+@@ -1,3 +0,0 @@
+-ctl_equal.o: ctl_equal.c ladspa.h ladspa_utils.h
+-ladspa_utils.o: ladspa_utils.c ladspa.h ladspa_utils.h
+-pcm_equal.o: pcm_equal.c ladspa.h ladspa_utils.h
+diff -ruN patch_original/NEWS patch_modified/NEWS
+--- patch_original/NEWS	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/NEWS	2019-10-07 13:26:47.000000000 +0200
+@@ -0,0 +1 @@
++NEWS
+diff -ruN patch_original/pcm/Makefile.am patch_modified/pcm/Makefile.am
+--- patch_original/pcm/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ patch_modified/pcm/Makefile.am	2019-10-07 14:21:27.000000000 +0200
+@@ -0,0 +1,5 @@
++AUTOMAKE_OPTIONS = subdir-objects
++AM_CFLAGS = -funroll-loops -ffast-math
++AM_CPPFLAGS = -I$(top_srcdir)/
++lib_LTLIBRARIES = libasound_module_pcm_equal.la
++libasound_module_pcm_equal_la_SOURCES = ../pcm_equal.c ../ladspa_utils.c
+diff -ruN patch_original/pcm_equal.c patch_modified/pcm_equal.c
+--- patch_original/pcm_equal.c	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/pcm_equal.c	2019-10-07 16:24:43.946904611 +0200
+@@ -24,8 +24,8 @@
+ #include <alsa/control.h>
+ #include <linux/soundcard.h>
+ 
+-#include "ladspa.h"
+-#include "ladspa_utils.h"
++#include <ladspa.h>
++#include <ladspa_utils.h>
+ 
+ typedef struct snd_pcm_equal {
+ 	snd_pcm_extplug_t ext;
+@@ -151,7 +151,7 @@
+ 	snd_config_t *sconf = NULL;
+ 	const char *controls = ".alsaequal.bin";
+ 	const char *library = "/usr/lib/ladspa/caps.so";
+-	const char *module = "Eq";
++	const char *module = "Eq10";
+ 	long channels = 2;
+ 	int err;
+ 	
+diff -ruN patch_original/README patch_modified/README
+--- patch_original/README	2019-10-07 12:57:42.000000000 +0200
++++ patch_modified/README	2019-10-07 16:24:17.346559255 +0200
+@@ -1,11 +1,11 @@
+ Alsaequal is a real-time adjustable equalizer plugin for ALSA. It can
+ be adjusted using any ALSA compatible mixer, e.g. alsamixergui.
+ 
+-Alsaequal uses the Eq CAPS LADSPA Plugin for audio processing, actually
++Alsaequal uses the Eq10 CAPS LADSPA Plugin for audio processing, actually
+ alsaequal is a generic LADSPA plugin interface with real-time access to
+ the LADSPA controls (the LADSPA plugin included with alsa doesn't allow
+ for real-time controls) but it was developed for and only tested with
+-Eq CAPS LADSPA plugin. You are welcome to try it with other plugins, it
++Eq10 CAPS LADSPA plugin. You are welcome to try it with other plugins, it
+ may work. Let me know how it goes, you can reach me at
+ <charles@thedigitalmachine.net>.
+ 
+@@ -66,7 +66,7 @@
+ 	library -- location of the LADSPA library, the default is
+ 					"/usr/lib/ladspa/caps.so"
+ 	module -- module name within the LADSPA library, the deafault
+-					is "Eq"
++					is "Eq10"
+ 	channels -- number of channels, the default is 2
+ }
+ 
+@@ -81,7 +81,7 @@
+ 	library -- location of the LADSPA library, the default is
+ 					"/usr/lib/ladspa/caps.so"
+ 	module -- module name within the LADSPA library, the deafault
+-					is "Eq"
++					is "Eq10"
+ 	channels -- number of channels, the default is 2
+ }
+ 
