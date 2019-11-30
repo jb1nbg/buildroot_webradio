@@ -6,6 +6,7 @@ export QT_QPA_PLATFORM=eglfs
 #export QT_QPA_GENERIC_PLUGINS=evdevtablet:/dev/input/touchscreen
 export QT_QPA_FONTDIR=/usr/share/fonts/liberation/
 
+export QT_QPA_EGLFS_HIDECURSOR=1
 export QT_QPA_EGLFS_WIDTH=480
 export QT_QPA_EGLFS_HEIGHT=320
 export QT_QPA_EGLFS_PHYSICAL_WIDTH=71
