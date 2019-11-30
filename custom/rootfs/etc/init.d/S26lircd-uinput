@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# Start lircd-uinput
+#
+#
+
+start() {
+	printf "Starting lirc-uinput: "
+	exp=0
+	while [ $exp -lt 1 ]
+	do
+	    exp=`ps -ef |grep -i "lircd" | grep -v grep | grep -v $0 | wc -l`
+	    echo -n "."
+	    sleep 1;
+	done
+	start-stop-daemon -b -S -q -m -p /var/run/lirc-uinput.pid --exec /usr/sbin/lircd-uinput -- -O /etc/lirc/lirc_options.conf
+	echo "OK"
+}
+
+stop() {
+	printf "Stopping lirc-uinput: "
+	start-stop-daemon -K -q -p /var/run/lirc-uinput.pid
+	echo "OK"
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
