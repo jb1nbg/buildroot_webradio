@@ -5,7 +5,7 @@ amixer -D default sset Channels 80%
 CONFIGFILE=/root/.config/qtwebradio/WebRadio.conf
 if [ -e ${CONFIGFILE} ]; then
     VOL=`cat ${CONFIGFILE} | grep "Volume="`
-    if [ $VOL != "" ]; then
+    if [ "{$VOL}" != "" ]; then
         VALUE=`echo ${VOL} | cut -d"=" -f2`
         #echo ${VALUE}
         amixer -D default sset Master ${VALUE}%
