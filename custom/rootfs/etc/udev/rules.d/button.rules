@@ -1,0 +1,4 @@
+#ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="button@6", SYMLINK+="input/key1"
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="button@1a", SYMLINK+="input/key2"
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="button@10", SYMLINK+="input/key3"
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="button@17", SYMLINK+="input/key4"
