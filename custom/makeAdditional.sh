@@ -32,7 +32,7 @@ if [ -e $TARGET_DIR/etc/init.d/S50sshd ]; then
     mv $TARGET_DIR/etc/init.d/S50sshd $TARGET_DIR/etc/init.d/S99sshd
 fi
 
-cp -a output/host/arm-buildroot-linux-gnueabihf/sysroot/usr/lib/libatomic.so* $TARGET_DIR/lib/
+cp -a output/host/arm-buildroot-linux-gnueabihf/sysroot/lib/libatomic.so* $TARGET_DIR/lib/
 cp -a output/host/arm-buildroot-linux-gnueabihf/sysroot/usr/lib/libstdc++.so $TARGET_DIR/lib/
 cp -a output/host/arm-buildroot-linux-gnueabihf/sysroot/usr/lib/libstdc++.so.6 $TARGET_DIR/lib/
 cp -a output/host/arm-buildroot-linux-gnueabihf/sysroot/usr/lib/libstdc++.so.6.0.24 $TARGET_DIR/lib/
