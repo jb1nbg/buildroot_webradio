@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEMS=="input", ATTRS{name}=="lircd-uinput", SYMLINK+="input/remote"
