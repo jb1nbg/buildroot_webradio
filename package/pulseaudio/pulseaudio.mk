@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PULSEAUDIO_VERSION = 12.2
+PULSEAUDIO_VERSION = 13.0
 PULSEAUDIO_SOURCE = pulseaudio-$(PULSEAUDIO_VERSION).tar.xz
 PULSEAUDIO_SITE = http://freedesktop.org/software/pulseaudio/releases
 PULSEAUDIO_INSTALL_STAGING = YES
@@ -13,7 +13,8 @@ PULSEAUDIO_LICENSE_FILES = LICENSE GPL LGPL
 PULSEAUDIO_CONF_OPTS = \
 	--disable-default-build-tests \
 	--disable-legacy-database-entry-format \
-	--disable-manpages
+	--disable-manpages \
+	--disable-running-from-build-tree
 
 PULSEAUDIO_DEPENDENCIES = \
 	host-pkgconf libtool libsndfile speex host-intltool \
@@ -82,11 +83,29 @@ else
 PULSEAUDIO_CONF_OPTS += --without-soxr
 endif
 
-ifeq ($(BR2_PACKAGE_BLUEZ_UTILS)$(BR2_PACKAGE_SBC),yy)
-PULSEAUDIO_CONF_OPTS += --enable-bluez4
-PULSEAUDIO_DEPENDENCIES += bluez_utils sbc
+ifeq ($(BR2_PACKAGE_FFTW),y)
+PULSEAUDIO_CONF_OPTS += --with-fftw
+ifeq ($(BR2_PACKAGE_FFTW_DOUBLE),y)
+PULSEAUDIO_DEPENDENCIES += fftw-double
+endif
+ifeq ($(BR2_PACKAGE_FFTW_LONG_DOUBLE),y)
+PULSEAUDIO_DEPENDENCIES += fftw-long-double
+endif
+ifeq ($(BR2_PACKAGE_FFTW_QUAD),y)
+PULSEAUDIO_DEPENDENCIES += fftw-quad
+endif
+ifeq ($(BR2_PACKAGE_FFTW_SINGLE),y)
+PULSEAUDIO_DEPENDENCIES += fftw-single
+endif
 else
-PULSEAUDIO_CONF_OPTS += --disable-bluez4
+PULSEAUDIO_CONF_OPTS += --without-fftw
+endif
+
+ifeq ($(BR2_PACKAGE_SPEEX),y)
+PULSEAUDIO_CONF_OPTS += --with-speex
+PULSEAUDIO_DEPENDENCIES += speex
+else
+PULSEAUDIO_CONF_OPTS += --without-spexx
 endif
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS)$(BR2_PACKAGE_SBC),yy)
