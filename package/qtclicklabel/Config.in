@@ -1,0 +1,8 @@
+config BR2_PACKAGE_QTCLICKLABEL
+	bool "qtclicklabel"
+	depends on BR2_PACKAGE_QT5BASE
+	help
+	  QLabel with added "clicked" Signal and text size limitation 
+	  if the text is longer as the control width.
+	  
+	  This control has also a QDesigner plugin.
