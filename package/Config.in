@@ -1,7 +1,7 @@
-menu "Joerg packages"
+menu "WebRadio packages"
 
-	source "package/qclicklabel/Config.in"
-	source "package/webradio/Config.in"
+	source "package/qtclicklabel/Config.in"
+	source "package/qtwebradio/Config.in"
 endmenu
 
 menu "Target packages"
