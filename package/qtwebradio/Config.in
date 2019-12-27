@@ -1,0 +1,6 @@
+config BR2_PACKAGE_QTWEBRADIO
+	bool "qtwebradio"
+	depends on BR2_PACKAGE_QT5BASE
+	select BR2_PACKAGE_QTCLICKLABEL
+	help
+	  Qt5 based Webradio
