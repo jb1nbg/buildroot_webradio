@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Start hciattach
+#
+
+start() {
+	printf "Attach hci to ttyAMA0: "
+	exp=0
+	while [ $exp -lt 1 ]
+	do
+	    exp=`ps -ef |grep -i "bluetoothd" | grep -v grep | grep -v $0 | wc -l`
+	    echo -n "."
+	    sleep 1;
+	done
+	/usr/bin/hciattach /dev/ttyAMA0 bcm43xx 921600 noflow -
+	echo "OK"
+}
+
+stop() {
+	printf "Detach hci from ttyAMA0: "
+	killall hciattach
+	echo "OK"
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
