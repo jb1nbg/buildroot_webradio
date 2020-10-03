@@ -72,6 +72,15 @@ MPG123_DEPENDENCIES += alsa-lib
 MPG123_CONF_ENV += LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs alsa`"
 endif
 
+ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
+MPG123_AUDIO += pulse
+MPG123_CONF_OPTS += --with-default-audio=pulse
+MPG123_DEPENDENCIES += pulseaudio
+# configure script does NOT use pkg-config to figure out how to link
+# with portaudio, breaking static linking as portaudio uses pthreads
+MPG123_CONF_ENV += LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs pulse`"
+endif
+
 MPG123_CONF_OPTS += --with-audio=$(subst $(space),$(comma),$(MPG123_AUDIO))
 
 # output modules are loaded with dlopen()
